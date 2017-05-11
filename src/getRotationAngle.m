@@ -18,7 +18,7 @@ function [ angle ] = getRotationAngle( image )
     image = image - min(min(image));
     image = image / max(max(image));
     
-    quadSize = [1:min(sz);1:min(sz)]+0.5*(sz-min(sz))';
+    quadSize = [1:min(sz);1:min(sz)]+0.5*repmat((sz-min(sz))', 1, min(sz));
     quadImage = image(quadSize(1,:),quadSize(2,:));
 
     BW = 1-quadImage;

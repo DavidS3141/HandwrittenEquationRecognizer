@@ -1,4 +1,8 @@
+# Matlab files
+*.m~
+
 # Large files not to upload
+archives
 2015-01-28-data.tar
 CROHME_full_v2.zip
 

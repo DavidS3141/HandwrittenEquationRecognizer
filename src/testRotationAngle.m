@@ -39,7 +39,7 @@ imshow(image);
 
 %%
 
-quadSize = [1:min(sz);1:min(sz)]+0.5*(sz-min(sz))';
+quadSize = [1:min(sz);1:min(sz)]+0.5*repmat((sz-min(sz))', 1, min(sz));
 curimage = image(quadSize(1,:),quadSize(2,:));
 
 BW = edge(curimage,'canny');
