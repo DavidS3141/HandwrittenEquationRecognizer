@@ -1,3 +1,7 @@
+# Large files not to upload
+2015-01-28-data.tar
+CROHME_full_v2.zip
+
 # OS specifics
 .DS_Store
 
