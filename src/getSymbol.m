@@ -1,0 +1,16 @@
+function [ symbol, nTrain, nTest ] = getSymbol( symbolMap, nr )
+% getSymbol: returns the symbol associated to the identifier n
+%  in the symbolMap
+% nTrain: number of training examples
+% nTest: number of test examples
+
+for i=1:length(symbolMap{1})
+    if(strcmp(symbolMap{1}(i, :), num2str(nr)))
+        symbol = symbolMap{2}(i, :);
+        nTrain = symbolMap{3}(i, :);
+        nTest = symbolMap{4}(i, :);
+    end
+end
+
+end
+
