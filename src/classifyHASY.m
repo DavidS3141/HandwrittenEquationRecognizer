@@ -7,6 +7,8 @@ close all;
 symbolFilePath = '../data/extract/symbols.csv';
 symbolFile = fopen(symbolFilePath);
 symbolMap = textscan(symbolFile, '%s %s %s %s', 'Delimiter', ',');
+sym = getSymbol(symbolMap, 323);
+
 
 labelFilePath = '../data/extract/hasy-data-labels.csv';
 labelFile = fopen(labelFilePath);
@@ -24,7 +26,6 @@ n = size(a,3);
 %% Reshape features vector
 sizeImg = 32;
 X = zeros(n, sizeImg^2);
-y = y(1:n);
 
 for ii=1:n
     img = a(:,:,ii);
@@ -34,9 +35,16 @@ end
 % The image can be retrieved by reshaping to [sizeImg, sizeImg]
 
 %% Shuffle
+% xverif = X(1231, :);
+% yverif = y(1231);
+% 
+% xverif2 = X(perm(1231), :);
+% yverif2 = y(perm(1231));
+
 perm = randperm(n);
 X = X(perm, :);
 y = y(perm);
+
 
 %% Display several images
 nImg = 3;
@@ -48,7 +56,7 @@ for i=idx
 end
 
 %% Split train-test
-trainProp = 0.8;
+trainProp = 0.7;
 testProp = 1 - trainProp;
 
 nTrain = round(trainProp*n);
@@ -61,12 +69,37 @@ ytest = y(nTrain+1:end, :);
 
 
 %% Classify
-nExamples = 10000;
+nExamples = nTrain;
 % nExamples = size(a,3);
 perm2 = randperm(nExamples);
 
-mdl = fitcknn(Xtrain(perm2, :), ytrain(perm2), 'NumNeighbors', 5);
+% KNN
+numNeighbors = 7;
+knn = fitcknn(Xtrain(perm2, :), ytrain(perm2), 'NumNeighbors', numNeighbors);
 
-ypred = mdl.predict(Xtest);
-mr = mean(ypred ~= ytest)
-%L = mdl.loss(Xtest, ytest);
+ypredNN = knn.predict(Xtest);
+mrNN = mean(ypredNN ~= ytest)
+% 
+% % Bayes
+% bay = fitNaiveBayes(Xtrain, ytrain);
+% ypredBay = bay.predict(Xtest);
+% mrBay = mean(ypredBay ~= ytest)
+% %cMat1 = confusionmat(species,C1) 
+
+% Tree
+tree = fitctree(Xtrain(perm2, :), ytrain(perm2));
+
+ypredTree = tree.predict(Xtest);
+mrTree = mean(ypredTree ~= ytest)
+
+
+% Linear discriminant
+lin = fitcdiscr(Xtrain(perm2, :), ytrain(perm2));
+ypredLin = predict(lin, Xtest);
+mrLin = mean(ypredLin ~= ytest)
+
+% quadclass = fitcdiscr(meas,species,...
+%     'discrimType','quadratic');
+% meanclass2 = predict(quadclass,meanmeas)
+
+
