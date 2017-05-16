@@ -4,6 +4,9 @@ function [ symbol, nTrain, nTest ] = getSymbol( symbolMap, nr )
 % nTrain: number of training examples
 % nTest: number of test examples
 
+symbol = 0;
+nTrain = 0;
+nTest = 0;
 for i=1:length(symbolMap{1})
     if(strcmp(symbolMap{1}(i, :), num2str(nr)))
         symbol = symbolMap{2}(i, :);
