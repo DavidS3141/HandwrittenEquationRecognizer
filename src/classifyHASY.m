@@ -36,7 +36,7 @@ end
 % The image can be retrieved by reshaping to [sizeImg, sizeImg]
 
 %% Display several images
-nImg = 20;
+nImg = 0;
 idx = randsample(1:n, nImg);
 
 % print images
@@ -71,6 +71,17 @@ end
 
 pause;
 close all;
+
+%% Transform labels
+
+oldy = y;
+y = 0*y - 1;
+y_translate = zeros([length(symbolMap{1})-1 1]);
+for i = 1:(length(symbolMap{1})-1)
+    curlabel = str2num(symbolMap{1}{i+1});
+    y_translate(i) = curlabel;
+    y(oldy == curlabel) = i;
+end
 
 %% Shuffle
 % xverif = X(1231, :);
