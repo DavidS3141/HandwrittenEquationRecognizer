@@ -20,7 +20,6 @@ fclose('all');
 %% Load images
 imgPath = '../data/extract/HASYv2_logical.mat';
 load(imgPath);
-a = cat(3,a(:,:,1),a);
 
 n = size(a,3);
 assert(n == length(y));
@@ -107,6 +106,7 @@ knn = fitcknn(Xtrain(perm2, :), ytrain(perm2), 'NumNeighbors', numNeighbors);
 
 ypredNN = knn.predict(Xtest);
 mrNN = mean(ypredNN ~= ytest)
+return;
 % 
 % % Bayes
 % bay = fitNaiveBayes(Xtrain, ytrain);
