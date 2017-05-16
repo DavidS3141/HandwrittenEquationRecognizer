@@ -7,7 +7,7 @@ close all;
 symbolFilePath = '../data/extract/symbols.csv';
 symbolFile = fopen(symbolFilePath);
 symbolMap = textscan(symbolFile, '%s %s %s %s', 'Delimiter', ',');
-sym = getSymbol(symbolMap, 323);
+sym = getSymbol(symbolMap, 1031);
 
 
 labelFilePath = '../data/extract/hasy-data-labels.csv';
@@ -20,8 +20,10 @@ fclose('all');
 %% Load images
 imgPath = '../data/extract/HASYv2_logical.mat';
 load(imgPath);
+a = cat(3,a(:,:,1),a);
 
 n = size(a,3);
+assert(n == length(y));
 
 %% Reshape features vector
 sizeImg = 32;
@@ -34,6 +36,43 @@ end
 
 % The image can be retrieved by reshaping to [sizeImg, sizeImg]
 
+%% Display several images
+nImg = 20;
+idx = randsample(1:n, nImg);
+
+% print images
+for i=idx
+   figure;
+   imshow(reshape(X(i, :), [sizeImg, sizeImg]));
+   label = y(i);
+   symbol = getSymbol(symbolMap,label);
+   symbol = symbol{1};
+   title(sprintf('%i',i));
+   set(gca,'fontsize',18);
+end
+
+pause;
+close all;
+
+% show the 'solution', the labels of the symbols
+for i=idx
+   figure;
+   imshow(reshape(X(i, :), [sizeImg, sizeImg]));
+   label = y(i);
+   symbol = getSymbol(symbolMap,label);
+   symbol = symbol{1};
+   if symbol(1)=='\\'
+       symbolWS = symbol(2:end);
+       title(sprintf('%i\n%s\n%s',i,symbol,symbolWS));
+   else
+       title(sprintf('%i\n%s',i,symbol));
+   end
+   set(gca,'fontsize',18);
+end
+
+pause;
+close all;
+
 %% Shuffle
 % xverif = X(1231, :);
 % yverif = y(1231);
@@ -44,16 +83,6 @@ end
 perm = randperm(n);
 X = X(perm, :);
 y = y(perm);
-
-
-%% Display several images
-nImg = 3;
-idx = randsample(1:n, nImg);
-
-for i=idx
-   figure;
-   imshow(reshape(X(i, :), [sizeImg, sizeImg]));
-end
 
 %% Split train-test
 trainProp = 0.7;
@@ -66,7 +95,6 @@ ytrain = y(1:nTrain, :);
 
 Xtest = X(nTrain+1:end, :);
 ytest = y(nTrain+1:end, :);
-
 
 %% Classify
 nExamples = nTrain;
