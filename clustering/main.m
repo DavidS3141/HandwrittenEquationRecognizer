@@ -9,6 +9,10 @@ gray = rgb2gray(img);
 % otsu thresholding & 1 for black pixel
 BW = 1 - imbinarize(gray);
 
+%% data conversion parameters
+x_scale = 1;
+y_scale = 8;
+
 %% convert binary image into data array
 
 % data format x1 x2
@@ -18,8 +22,8 @@ for ii = 1:size(BW,1)
     for jj = 1:size(BW,2)
         if BW(ii,jj) == 1
             index = index + 1;
-            data(index,1) = size(BW,1) - ii + 1;
-            data(index,2) = jj;
+            data(index,1) = (size(BW,1) - ii + 1)/y_scale;
+            data(index,2) = jj/x_scale;
         end
     end
 end
@@ -35,35 +39,37 @@ end
 Z = linkage(data,'single','euclidean');
 c = cluster(Z,'maxclust',16);
 
+% %% EM Gaussian Mixture Model
+% 
+% obj = fitgmdist(data,16);
+% c = cluster(obj,data);
+% 
+% %% k-means clustering
+% 
+% [c,C] = kmeans(data,16,'Distance','cityblock');
+
+%% generate output
+
+% find bounding box values & cluster centres
+% TODO: remove corner array for efficiency in function
+corner1 = zeros(size(unique(c),1),2);
+corner2 = zeros(size(unique(c),1),2);
+means = zeros(size(unique(c),1),2);
+bb = zeros(size(unique(c),1),4);
+for ii = unique(c)'
+    corner1(ii,:) = min(data(c==ii,:)).*[y_scale x_scale];
+    corner2(ii,:) = max(data(c==ii,:)).*[y_scale x_scale];
+    means(ii,:) = mean(data(c==ii,:)).*[y_scale x_scale];
+    bb(ii,:) = [corner1(ii,2),corner1(ii,1),corner2(ii,2)-corner1(ii,2),corner2(ii,1)-corner1(ii,1)];
+end
+
 %% visualize clusters
 scatter(data(:,2),data(:,1),16,c)
 for ii = unique(c)'
     figure
     hold on
-    scatter(data(c==ii,2),data(c==ii,1));
-    scatter(mean(data(c==ii,2)),mean(data(c==ii,1)),'LineWidth',1.5,'MarkerFaceColor',[0 .7 .7])
+    scatter(data(c==ii,2)*x_scale,data(c==ii,1)*y_scale);
+    scatter(means(ii,2),means(ii,1),'LineWidth',1.5,'MarkerFaceColor',[0 .7 .7])
+    rectangle('Position', bb(ii,:),'EdgeColor','r','LineWidth',2 )
     axis([0 size(BW,2) 0 size(BW,1)]);
-end
-
-% %% EM Gaussian Mixture Model
-% 
-% obj = fitgmdist(data,16);
-% idx = cluster(obj,data);
-% scatter(data(:,2),data(:,1),10,idx)
-% 
-% %% k-means clustering
-% 
-% [idx,C] = kmeans(data,16,'Distance','cityblock');
-% scatter(data(:,2),data(:,1),16,idx)
-
-%% generate output
-
-% find bounding box values & cluster centres
-corner1 = zeros(size(unique(c),1),2);
-corner2 = zeros(size(unique(c),1),2);
-means = zeros(size(unique(c),1),2);
-for ii = unique(c)'
-    corner1(ii,:) = min(data(c==ii,:));
-    corner2(ii,:) = max(data(c==ii,:));
-    means(ii,:) = mean(data(c==ii,:));
 end
