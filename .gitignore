@@ -8,6 +8,7 @@ CROHME_full_v2.zip
 
 # OS specifics
 .DS_Store
+Thumbs.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
