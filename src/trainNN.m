@@ -13,11 +13,11 @@ disp('Reduce input size')
 [COEFF,~,~,~,explained,mu] = pca(X(1:2:end,:),'NumComponents', 48);
 X = (X-mu)*COEFF;
 
-% imageList = reshape(Xnn,[size(Xnn,1),32,32]);
-% Xnn = zeros(size(Xnn,1),64);
-% for i=1:size(Xnn,1)
-%     Xnn(i,:)=reshape(imresize(reshape(imageList(i,:,:),[32 32]),[8 8]),[1 64]);
-% end
+%imageList = reshape(X,[size(X,1),32,32]);
+%X = zeros(size(X,1),64);
+%for i=1:size(X,1)
+%    X(i,:)=reshape(imresize(reshape(imageList(i,:,:),[32 32]),[8 8]),[1 64]);
+%end
 
 y = (1:max(y) == y);
 
@@ -47,9 +47,10 @@ hiddenLayerSize = 150;
 net = patternnet(hiddenLayerSize, trainFcn);
 
 % Setup Division of Data for Training, Validation, Testing
-net.divideParam.trainRatio = 20/100;
-net.divideParam.valRatio = 40/100;
-net.divideParam.testRatio = 40/100;
+net.divideFcn = 'divideint';
+net.divideParam.trainRatio = 80/100;
+net.divideParam.valRatio = 10/100;
+net.divideParam.testRatio = 10/100;
 
 % Train the Network
 [net,tr] = train(net,X,y);
@@ -57,20 +58,22 @@ net.divideParam.testRatio = 40/100;
 save('allNetData.mat');
 
 % Test the Network
-y = net(X);
-e = gsubtract(y,y);
-performance = perform(net,y,y);
-tind = vec2ind(y);
-yind = vec2ind(y);
-percentErrors = sum(tind ~= yind)/numel(tind);
+Xtest = X(:,tr.testInd);
+ytest = y(:,tr.testInd);
+yhat = net(Xtest);
+e = gsubtract(ytest,yhat);
+performance = perform(net,ytest,yhat);
+yind = vec2ind(ytest);
+yhatind = vec2ind(yhat);
+percentErrors = sum(yind ~= yhatind)/numel(yind);
 
 % View the Network
-view(net)
+% view(net)
 
 % Plots
 % Uncomment these lines to enable various plots.
 figure, plotperform(tr)
 figure, plottrainstate(tr)
 figure, ploterrhist(e)
-%figure, plotconfusion(t,y)
-figure, plotroc(y,y)
+% figure, plotconfusion(ytest,yhat)
+figure, plotroc(ytest,yhat)
