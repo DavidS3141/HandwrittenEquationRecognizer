@@ -6,11 +6,12 @@ load('../data/extract/trainData.mat');
 
 %% reduce data dimensionality
 
-ynn = y;
-Xnn = X;
+y = y(1:1:end);
+X = X(1:1:end,:);
 
 disp('Reduce input size')
-[COEFF,Xnn] = pca(Xnn,'NumComponents', 48);
+[COEFF,~,~,~,explained,mu] = pca(X(1:2:end,:),'NumComponents', 48);
+X = (X-mu)*COEFF;
 
 % imageList = reshape(Xnn,[size(Xnn,1),32,32]);
 % Xnn = zeros(size(Xnn,1),64);
@@ -18,10 +19,10 @@ disp('Reduce input size')
 %     Xnn(i,:)=reshape(imresize(reshape(imageList(i,:,:),[32 32]),[8 8]),[1 64]);
 % end
 
-ynn = (1:max(ynn) == ynn);
+y = (1:max(y) == y);
 
-Xnn = Xnn';
-ynn = ynn';
+X = X';
+y = y';
 
 %% train neural network
 
@@ -31,11 +32,8 @@ ynn = ynn';
 %
 % This script assumes these variables are defined:
 %
-%   Xnn - input data.
-%   ynn - target data.
-
-x = Xnn;
-t = ynn;
+%   X - input data.
+%   y - target data.
 
 % Choose a Training Function
 % For a list of all training functions type: help nntrain
@@ -49,18 +47,20 @@ hiddenLayerSize = 150;
 net = patternnet(hiddenLayerSize, trainFcn);
 
 % Setup Division of Data for Training, Validation, Testing
-net.divideParam.trainRatio = 30/100;
-net.divideParam.valRatio = 35/100;
-net.divideParam.testRatio = 35/100;
+net.divideParam.trainRatio = 20/100;
+net.divideParam.valRatio = 40/100;
+net.divideParam.testRatio = 40/100;
 
 % Train the Network
-[net,tr] = train(net,x,t);
+[net,tr] = train(net,X,y);
+
+save('allNetData.mat');
 
 % Test the Network
-y = net(x);
-e = gsubtract(t,y);
-performance = perform(net,t,y)
-tind = vec2ind(t);
+y = net(X);
+e = gsubtract(y,y);
+performance = perform(net,y,y);
+tind = vec2ind(y);
 yind = vec2ind(y);
 percentErrors = sum(tind ~= yind)/numel(tind);
 
@@ -73,4 +73,4 @@ figure, plotperform(tr)
 figure, plottrainstate(tr)
 figure, ploterrhist(e)
 %figure, plotconfusion(t,y)
-figure, plotroc(t,y)
+figure, plotroc(y,y)
