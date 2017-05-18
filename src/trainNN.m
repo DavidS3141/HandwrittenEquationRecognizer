@@ -13,11 +13,12 @@ disp('Reduce input size')
 [COEFF,~,~,~,explained,mu] = pca(X(1:2:end,:),'NumComponents', 48);
 X = (X-mu)*COEFF;
 
-%imageList = reshape(X,[size(X,1),32,32]);
-%X = zeros(size(X,1),64);
-%for i=1:size(X,1)
-%    X(i,:)=reshape(imresize(reshape(imageList(i,:,:),[32 32]),[8 8]),[1 64]);
-%end
+% imageList = reshape(X,[size(X,1),32,32]);
+% reducedSize = 8;
+% X = zeros(size(X,1),reducedSize^2);
+% for i=1:size(X,1)
+%    X(i,:)=reshape(imresize(reshape(imageList(i,:,:),[32 32]),[reducedSize reducedSize]),[1 reducedSize^2]);
+% end
 
 y = (1:max(y) == y);
 

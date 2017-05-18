@@ -22,7 +22,7 @@ for ii = 1:size(BW,1)
     for jj = 1:size(BW,2)
         if BW(ii,jj) == 1
             index = index + 1;
-            data(index,1) = (size(BW,1) - ii + 1)/y_scale;
+            data(index,1) = ii/y_scale;
             data(index,2) = jj/x_scale;
         end
     end
@@ -69,14 +69,14 @@ end
 listBB = listBB';
 
 %% visualize clusters
-scatter(data(:,2),data(:,1),16,c)
-for ii = unique(c)'
-    figure
-    hold on
-    scatter(data(c==ii,2)*x_scale,data(c==ii,1)*y_scale);
-    scatter(means(ii,2),means(ii,1),'LineWidth',1.5,'MarkerFaceColor',[0 .7 .7])
-    rectangle('Position',[bb(ii,1:2),bb(ii,3:4)-bb(ii,1:2)],'EdgeColor','r','LineWidth',2 )
-    axis([0 size(BW,2) 0 size(BW,1)]);
-end
+% scatter(data(:,2),data(:,1),16,c)
+% for ii = unique(c)'
+%     figure
+%     hold on
+%     scatter(data(c==ii,2)*x_scale,data(c==ii,1)*y_scale);
+%     scatter(means(ii,2),means(ii,1),'LineWidth',1.5,'MarkerFaceColor',[0 .7 .7])
+%     rectangle('Position',[bb(ii,1:2),bb(ii,3:4)-bb(ii,1:2)],'EdgeColor','r','LineWidth',2 )
+%     axis([0 size(BW,2) 0 size(BW,1)]);
+% end
 
 end
