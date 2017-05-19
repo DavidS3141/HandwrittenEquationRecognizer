@@ -8,8 +8,6 @@ for BB = listBB
     symbolImage = image(BB(1):BB(2),BB(3):BB(4),:);
     symbolImage = rgb2gray(symbolImage);
     symbolImage = double(symbolImage)/double(max(max(symbolImage)));
-    figure;
-    imshow(symbolImage);
     sizeOfImage = max(size(symbolImage));
     addRows = sizeOfImage - size(symbolImage,1);
     addCols = sizeOfImage - size(symbolImage,2);
@@ -19,13 +17,13 @@ for BB = listBB
     symbolImage = [ symbolImage, ones(size(symbolImage,1),ceil(addCols/2))];
     assert(size(symbolImage,1)==size(symbolImage,2));
     symbolImage = imresize(symbolImage, [32 32]);
-    tresh = prctile(symbolImage(:),16.5); %perform this over all symbols simultaneously
-    symbolImage = (symbolImage >= tresh);
+    % tresh = prctile(symbolImage(:),16.5); %perform this over all symbols simultaneously
+    % symbolImage = (symbolImage >= tresh);
+    figure;
     prob = getRecognition(symbolImage);
     [bestp, besty] = max(prob);
-    %figure;
-    %imshow(symbolImage);
-    %title(sprintf('%f:%i',bestp,besty));
+    % imshow(symbolImage);
+    title(sprintf('%f:%i',bestp,besty));
 end
 
 end
