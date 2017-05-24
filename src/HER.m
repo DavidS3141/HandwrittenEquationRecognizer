@@ -2,7 +2,7 @@ function [ listSymbols ] = HER( image )
 %HER Summary of this function goes here
 %   Detailed explanation goes here
 
-listBB = getSymbolPositions(image);
+listBB = getSymbolPositions(image,'maxclust',16);
 
 for BB = listBB
     symbolImage = image(BB(1):BB(2),BB(3):BB(4),:);

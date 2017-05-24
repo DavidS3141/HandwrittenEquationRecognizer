@@ -37,7 +37,8 @@ end
 
 % create agglomerative hierarchical cluster tree
 Z = linkage(data,'single','euclidean');
-c = cluster(Z,'maxclust',16);
+c = cluster(Z,'cutoff',1.9,'criterion','distance');
+%c = cluster(Z,'maxclust',16)
 
 % %% EM Gaussian Mixture Model
 % 

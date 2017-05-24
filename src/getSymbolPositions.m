@@ -1,4 +1,4 @@
-function [ listBB ] = getSymbolPositions( image )
+function [ listBB ] = getSymbolPositions( image,cutoff_flag,cutoff_var)
 %getSymbolPositions Summary of this function goes here
 %   Detailed explanation goes here
 %       Returns a list of bounding boxes, described by 4-dim vectors
@@ -37,7 +37,11 @@ end
 
 % create agglomerative hierarchical cluster tree
 Z = linkage(data,'single','euclidean');
-c = cluster(Z,'maxclust',16);
+if cutoff_flag == 'maxclust'
+    c = cluster(Z,'maxclust',cutoff_var);
+else
+    c = cluster(Z,'cutoff',1.9,'criterion','distance');
+end
 
 % %% EM Gaussian Mixture Model
 % 
