@@ -6,19 +6,20 @@ load('../data/extract/trainData.mat');
 
 %% reduce data dimensionality
 
-y = y(1:1:end);
-X = X(1:1:end,:);
+% y = y(1:1:end);
+% X = X(1:1:end,:);
 
 disp('Reduce input size')
-[COEFF,~,~,~,explained,mu] = pca(X(1:2:end,:),'NumComponents', 48);
-X = (X-mu)*COEFF;
+COEFF = [];
+% [COEFF,~,~,~,explained,mu] = pca(X(1:2:end,:),'NumComponents', 48);
+% X = (X-mu)*COEFF;
 
-% imageList = reshape(X,[size(X,1),32,32]);
-% reducedSize = 8;
-% X = zeros(size(X,1),reducedSize^2);
-% for i=1:size(X,1)
-%    X(i,:)=reshape(imresize(reshape(imageList(i,:,:),[32 32]),[reducedSize reducedSize]),[1 reducedSize^2]);
-% end
+imageList = reshape(X,[size(X,1),32,32]);
+reducedSize = 16;
+X = zeros(size(X,1),reducedSize^2);
+for i=1:size(X,1)
+   X(i,:)=reshape(imresize(reshape(imageList(i,:,:),[32 32]),[reducedSize reducedSize]),[1 reducedSize^2]);
+end
 
 y = (1:max(y) == y);
 
@@ -49,14 +50,12 @@ net = patternnet(hiddenLayerSize, trainFcn);
 
 % Setup Division of Data for Training, Validation, Testing
 net.divideFcn = 'divideint';
-net.divideParam.trainRatio = 80/100;
-net.divideParam.valRatio = 10/100;
+net.divideParam.trainRatio = 70/100;
+net.divideParam.valRatio = 20/100;
 net.divideParam.testRatio = 10/100;
 
 % Train the Network
 [net,tr] = train(net,X,y);
-
-save('allNetData.mat');
 
 % Test the Network
 Xtest = X(:,tr.testInd);
@@ -67,6 +66,13 @@ performance = perform(net,ytest,yhat);
 yind = vec2ind(ytest);
 yhatind = vec2ind(yhat);
 percentErrors = sum(yind ~= yhatind)/numel(yind);
+
+disp('Saving network');
+if isempty(COEFF)
+    save(sprintf('../data/models/net_misclass%i_indim%i.mat',ceil(100*percentErrors),size(Xtest,1)),'net');
+else
+    save(sprintf('../data/models/net_misclass%i_indim%i_PCA.mat',ceil(100*percentErrors),size(Xtest,1)),'net','mu','COEFF');
+end
 
 % View the Network
 % view(net)
