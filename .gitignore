@@ -2,6 +2,9 @@
 *.m~
 *.asv
 
+# iCloud files
+*.icloud
+
 # Large files not to upload
 archives
 2015-01-28-data.tar
