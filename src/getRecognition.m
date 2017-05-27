@@ -1,4 +1,4 @@
-function [ probVector ] = getRecognition( symbolImage )
+function [ probVector ] = getRecognition( symbolImage, method )
 %getRecognition Summary of this function goes here
 %   Detailed explanation goes here
 %       Return a probability vector containing probabilities for each label
