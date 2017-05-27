@@ -4,27 +4,12 @@ clc;
 close all;
 
 %% Read data
-symbolFilePath = '../data/extract/symbols.csv';
-symbolFile = fopen(symbolFilePath);
-symbolMap = textscan(symbolFile, '%s %s %s %s', 'Delimiter', ',');
-sym = getSymbol(symbolMap, 1031);
-
-
-labelFilePath = '../data/extract/hasy-data-labels.csv';
-labelFile = fopen(labelFilePath);
-labelStruct = textscan(labelFile, '%s %s %s %s', 'Delimiter', ',');
-y = cellfun(@str2double, labelStruct{2}(2:end));
-
-fclose('all');
-
-%% Load images
-imgPath = '../data/extract/HASYv2_logical.mat';
-load(imgPath);
+[a, y, symbolMap] = loadHASY;
 
 n = size(a,3);
 assert(n == length(y));
 
-%% Reshape features vector
+% Reshape features vector
 sizeImg = 32;
 X = zeros(n, sizeImg^2);
 
@@ -33,19 +18,22 @@ for ii=1:n
     X(ii, :) = img(:)'; % X(ii, :) is an image as a row
 end
 
+clear a;
 % The image can be retrieved by reshaping to [sizeImg, sizeImg]
 
 %% Display several images
 nImg = 0;
 idx = randsample(1:n, nImg);
 
+if(nImg==0)
+    disp('No image to display - Skipping this section');
+else
 % print images
 for i=idx
    figure;
    imshow(reshape(X(i, :), [sizeImg, sizeImg]));
    label = y(i);
    symbol = getSymbol(symbolMap,label);
-   symbol = symbol{1};
    title(sprintf('%i',i));
    set(gca,'fontsize',18);
 end
@@ -59,8 +47,7 @@ for i=idx
    imshow(reshape(X(i, :), [sizeImg, sizeImg]));
    label = y(i);
    symbol = getSymbol(symbolMap,label);
-   symbol = symbol{1};
-   if symbol(1)=='\\'
+   if strcmp(symbol(1),'\\')==1
        symbolWS = symbol(2:end);
        title(sprintf('%i\n%s\n%s',i,symbol,symbolWS));
    else
@@ -71,74 +58,101 @@ end
 
 pause;
 close all;
-
-%% Transform labels
-
-oldy = y;
-y = 0*y - 1;
-y_translate = zeros([length(symbolMap{1})-1 1]);
-for i = 1:(length(symbolMap{1})-1)
-    curlabel = str2num(symbolMap{1}{i+1});
-    y_translate(i) = curlabel;
-    y(oldy == curlabel) = i;
 end
 
-%% Shuffle
-% xverif = X(1231, :);
-% yverif = y(1231);
-% 
-% xverif2 = X(perm(1231), :);
-% yverif2 = y(perm(1231));
+%% Transform labels from 31:xx:1400 to 1:369
+y = transformLabels(y, symbolMap{1});
 
-perm = randperm(n);
-X = X(perm, :);
-y = y(perm);
+%% Plot class distribution in X
+plotAll = false;
+if(~plotAll)
+    display('No class distribution to plot - Skipping this section');
+else
+    plotClassDistribution(X,y);
+end
 
-%% Split train-test
-trainProp = 0.7;
-testProp = 1 - trainProp;
 
-nTrain = round(trainProp*n);
+%% %% %% %% 
+nTrainClasses = 369;
 
-Xtrain = X(1:nTrain, :);
-ytrain = y(1:nTrain, :);
+Xcut = X(y<nTrainClasses+1,:);
+ycut = y(y<nTrainClasses+1);
 
-Xtest = X(nTrain+1:end, :);
-ytest = y(nTrain+1:end, :);
+%% Dimensionality reduction
+if(size(Xcut,1) < size(Xcut,2))
+    warning('PCA might lead to an unexpected result -- X has not got enough examples');
+else
+    [coeffs, Xpca, ~, ~, explained] = pca(Xcut);
+end
 
-%% Classify
-nExamples = nTrain;
-% nExamples = size(a,3);
-perm2 = randperm(nExamples);
+%% Plot variance
+if(~plotAll)
+    disp('No variance to plot - Skipping this section');
+else
+    plotVariance(explained);
+end
+
+%% Split train-test!
+trainRatio = 0.6;
+[XtrainFull, ytrain, XtestFull, ytest] = splitData(Xpca, ycut, trainRatio);
+
+%% nDim
+oldclock = clock;
+close all;
+nDimList = [4, 8, 16, 32, 64, 128];
+mse = zeros(size(nDimList,2),5);
+time = zeros(size(nDimList,2),5);
+mdlLabels = {'knn','bayes', 'tree', 'lda', 'svm'};
+
+for i=1:length(nDimList)
+% Reduce dimension
+nDim = nDimList(i);
+
+Xtrain = XtrainFull(:, 1:nDim);
+Xtest = XtestFull(:, 1:nDim);
+
+disp(['New dimension is nDim=', num2str(nDim)]);
+
 
 % KNN
-numNeighbors = 7;
-knn = fitcknn(Xtrain(perm2, :), ytrain(perm2), 'NumNeighbors', numNeighbors);
+% for i=1:2:maxNeighbours
+%     knn.NumNeighbors = i;
+%     disp([' knn-classifier predicting with k=', num2str(i)]);
+%     
+%     ypredNN = knn.predict(Xtest);
+%     mrNN = mean(ypredNN ~= ytest);
+%     disp(['     Predicted error e=', num2str(mrNN)]);
+%     plot(i, mrNN, 'ro', 'LineWidth', 6); drawnow;
+%     axis([0 maxNeighbours 0 0.5]);
+% end
+tic
+mse(i,1) = modelError('knn', Xtrain, ytrain, Xtest, ytest);
+time(i,1) = toc;
+% Optimize KNN
+% knnOpt = fitcknn(Xtrain,ytrain,...
+%     'OptimizeHyperparameters','auto',...
+%     'HyperparameterOptimizationOptions',...
+%     struct('AcquisitionFunctionName','expected-improvement-plus'));
 
-ypredNN = knn.predict(Xtest);
-mrNN = mean(ypredNN ~= ytest)
-return;
-% 
-% % Bayes
-% bay = fitNaiveBayes(Xtrain, ytrain);
-% ypredBay = bay.predict(Xtest);
-% mrBay = mean(ypredBay ~= ytest)
-% %cMat1 = confusionmat(species,C1) 
-
+% Bayes
+mse(i,2) = modelError('bayes', Xtrain, ytrain, Xtest, ytest);
+time(i,2) = toc - time(i,1);
 % Tree
-tree = fitctree(Xtrain(perm2, :), ytrain(perm2));
-
-ypredTree = tree.predict(Xtest);
-mrTree = mean(ypredTree ~= ytest)
-
+mse(i,3) = modelError('tree', Xtrain, ytrain, Xtest, ytest);
+time(i,3) = toc - time(i,2);
 
 % Linear discriminant
-lin = fitcdiscr(Xtrain(perm2, :), ytrain(perm2));
-ypredLin = predict(lin, Xtest);
-mrLin = mean(ypredLin ~= ytest)
+mse(i,4) = modelError('lda', Xtrain, ytrain, Xtest, ytest);
+time(i,4) = toc - time(i,3);
 
-% quadclass = fitcdiscr(meas,species,...
-%     'discrimType','quadratic');
-% meanclass2 = predict(quadclass,meanmeas)
+% Binary SVMs
+% mse(i,5) = modelError('svm', Xtrain, ytrain, Xtest, ytest);
+% time(i,5) = toc - time(i,4);
+end
 
+disp(' End prediction');
 
+plotModelsData(nDimList, mse, mdlLabels, 'Comparison of misclassification rate between models', 'Misclassification rate');
+plotModelsData(nDimList, time, mdlLabels, 'Comparison of time efficiency between models', 'Runtime');
+
+disp(['Total runtime is ', num2str(clock - oldclock)]);
