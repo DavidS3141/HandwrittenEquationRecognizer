@@ -113,20 +113,8 @@ Xtest = XtestFull(:, 1:nDim);
 
 disp(['New dimension is nDim=', num2str(nDim)]);
 
-
-% KNN
-% for i=1:2:maxNeighbours
-%     knn.NumNeighbors = i;
-%     disp([' knn-classifier predicting with k=', num2str(i)]);
-%     
-%     ypredNN = knn.predict(Xtest);
-%     mrNN = mean(ypredNN ~= ytest);
-%     disp(['     Predicted error e=', num2str(mrNN)]);
-%     plot(i, mrNN, 'ro', 'LineWidth', 6); drawnow;
-%     axis([0 maxNeighbours 0 0.5]);
-% end
 tic
-mse(i,1) = modelError('knn', Xtrain, ytrain, Xtest, ytest);
+[mse(i,1), mdlKnn] = modelError('knn', Xtrain, ytrain, Xtest, ytest);
 time(i,1) = toc;
 % Optimize KNN
 % knnOpt = fitcknn(Xtrain,ytrain,...
@@ -135,19 +123,20 @@ time(i,1) = toc;
 %     struct('AcquisitionFunctionName','expected-improvement-plus'));
 
 % Bayes
-mse(i,2) = modelError('bayes', Xtrain, ytrain, Xtest, ytest);
+[mse(i,2), mdlBayes] = modelError('bayes', Xtrain, ytrain, Xtest, ytest);
 time(i,2) = toc - time(i,1);
+
 % Tree
-mse(i,3) = modelError('tree', Xtrain, ytrain, Xtest, ytest);
+[mse(i,3), mdlTree] = modelError('tree', Xtrain, ytrain, Xtest, ytest);
 time(i,3) = toc - time(i,2);
 
 % Linear discriminant
-mse(i,4) = modelError('lda', Xtrain, ytrain, Xtest, ytest);
+[mse(i,4), mdlLda] = modelError('lda', Xtrain, ytrain, Xtest, ytest);
 time(i,4) = toc - time(i,3);
 
 % Binary SVMs
-% mse(i,5) = modelError('svm', Xtrain, ytrain, Xtest, ytest);
-% time(i,5) = toc - time(i,4);
+%[mse(i,5), mdlSvm] = modelError('svm', Xtrain, ytrain, Xtest, ytest);
+%time(i,5) = toc; %- time(i,4);
 end
 
 disp(' End prediction');
