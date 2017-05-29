@@ -11,7 +11,7 @@ BW = 1 - imbinarize(gray);
 
 %% data conversion parameters
 x_scale = 1;
-y_scale = 8;
+y_scale = 1;
 
 %% convert binary image into data array
 
@@ -51,6 +51,13 @@ end
 % %% k-means clustering
 % 
 % [c,C] = kmeans(data,16,'Distance','cityblock');
+
+% visualize data
+figure;
+hold on;
+for ii = unique(c)'
+    plot(data(c==ii,2),data(c==ii,1),'x');
+end
 
 %% generate output
 
