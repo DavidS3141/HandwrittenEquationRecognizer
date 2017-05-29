@@ -2,9 +2,21 @@ function [ listSymbols ] = HER( image )
 %HER Summary of this function goes here
 %   Detailed explanation goes here
 
-listBB = getSymbolPositions(image,'maxclust',16);
+persistent latexLabel
+if isempty(latexLabel)
+    load('../data/extract/latexLabel.mat');
+end
+
+angle = getRotationAngle(image);
+image = applyRotation(image,angle);
+filteredImage = filterImage(image);
+filteredImage = double(repmat(filteredImage,1,1,3));
+imshow(filteredImage);
+listBB = getSymbolPositions(filteredImage,'maxclust',16);
+size(image)
 
 for BB = listBB
+    disp(BB);
     symbolImage = image(BB(1):BB(2),BB(3):BB(4),:);
     symbolImage = rgb2gray(symbolImage);
     symbolImage = double(symbolImage)/double(max(max(symbolImage)));
@@ -19,12 +31,11 @@ for BB = listBB
     symbolImage = imresize(symbolImage, [32 32]);
     % tresh = prctile(symbolImage(:),16.5); %perform this over all symbols simultaneously
     % symbolImage = (symbolImage >= tresh);
-    figure;
     prob = getRecognition(symbolImage);
     [bestp, besty] = max(prob);
-    % imshow(symbolImage);
-    title(sprintf('%f:%i',bestp,besty));
+    figure;
+    imshow(symbolImage);
+    title(sprintf('%f:%i\n%s',bestp,besty,latexLabel{besty}));
 end
 
 end
-
