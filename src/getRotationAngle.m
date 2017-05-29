@@ -23,8 +23,9 @@ function [ angle ] = getRotationAngle( image )
 
     BW = 1-quadImage;
     BW = (BW > 0.7);
-
-    [H,T,~] = hough(BW,'RhoResolution',120,'ThetaResolution',0.5);
+    
+    rhoResolution = min(120, min(size(BW))/2);
+    [H,T,~] = hough(BW,'RhoResolution',rhoResolution,'ThetaResolution',0.5);
 
     bestSTD = 0;
     for i=1:size(H,2)
