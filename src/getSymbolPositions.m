@@ -16,6 +16,10 @@ gray = rgb2gray(image);
 % otsu thresholding & 1 for black pixel
 BW = 1 - imbinarize(gray);
 
+% check that clustering can actually handle this
+nbrpixels = sum(sum(BW));
+assert(nbrpixels<3000);
+
 %% data conversion parameters
 x_scale = 1;
 y_scale = 1;
@@ -79,6 +83,11 @@ for ii = unique(c)'
     corner1(ii,:) = min(data(c==ii,:)).*[y_scale x_scale];
     corner2(ii,:) = max(data(c==ii,:)).*[y_scale x_scale];
     means(ii,:) = mean(data(c==ii,:)).*[y_scale x_scale];
+    if size(data(c==ii,:),1)==1
+        corner1(ii,:) = data(c==ii,1);
+        corner2(ii,:) = data(c==ii,1);
+        means(ii,:) = data(c==ii,1);
+    end
     %listBB(ii,:) = [corner1(ii,2),corner1(ii,1),corner2(ii,2)-corner1(ii,2),corner2(ii,1)-corner1(ii,1)];
     bb(ii,:) = [corner1(ii,2),corner1(ii,1),corner2(ii,2),corner2(ii,1)];
     listBB(ii,:) = [corner1(ii,1),corner2(ii,1),corner1(ii,2),corner2(ii,2)];

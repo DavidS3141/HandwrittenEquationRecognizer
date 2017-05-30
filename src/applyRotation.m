@@ -2,6 +2,7 @@ function [ out_image ] = applyRotation( in_image, angle )
 %APPLYROTATION Summary of this function goes here
 %   Detailed explanation goes here
 
+    in_image = uint8(in_image);
     in_image_frame = ones(size(in_image));
     out_image = uint8(1-imrotate(in_image_frame,90+angle));
     sz = size(out_image);
