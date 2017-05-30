@@ -8,7 +8,6 @@ imshow(image);
 
 HER(image);
 
-return;
 %%
 image = imread('../data/test/09.png');
 

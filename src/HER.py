@@ -33,9 +33,13 @@ def HER(image):
         rx = listBB[1][i]
         ly = listBB[2][i]-1
         ry = listBB[3][i]
+        if (rx-lx)*(ry-ly)<15:
+            continue
         print(lx,rx,ly,ry)
         symbolImage = matlab.uint8((np.array(image,dtype=np.uint8)[lx:rx,ly:ry,:]).tolist())
         symbolImage = np.array(eng.rgb2gray(symbolImage))
+        symbolImage = symbolImage - np.min(symbolImage)
+        symbolImage = symbolImage / np.max(symbolImage)
         (xs,ys) = symbolImage.shape
         if xs<ys:
             symbolImage = np.concatenate((np.ones((np.floor((ys-xs)/2),ys)),symbolImage,np.ones((np.ceil((ys-xs)/2),ys))), axis = 0)
@@ -48,5 +52,5 @@ def HER(image):
         print(result)
         plt.figure
         plt.imshow(symbolImage)
-        plt.title('prob:%.0f\tpred:%s'%(np.max(result)*100.,latexLabel[np.argmax(result)]))
+        plt.title('prob:%.0f    pred:%s'%(np.max(result)*100.,latexLabel[np.argmax(result)]))
         plt.show()

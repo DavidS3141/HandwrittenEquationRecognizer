@@ -26,7 +26,7 @@
   \begin{@twocolumnfalse}
     \maketitle
     \begin{abstract}
-     	    The Handwritten Equation Recognizer (HER) is a novel approach to apply machine learning techniques in the context of pattern recognition. The focus of this work is to identify handwritten equations based on image data. The identification procedure consists of two steps: cluster the pixels in the image to symbols and then classify the recognized clusters as mathematical symbols.
+     	    The Handwritten Equation Recognizer (HER) is an approach to apply machine learning techniques in the context of pattern recognition. The focus of this work is to identify handwritten equations based on image data. The identification procedure consists of two steps: cluster the pixels in the image to symbols and then classify the recognized clusters as mathematical symbols.
     \end{abstract}
   \end{@twocolumnfalse}
 ]
@@ -58,12 +58,12 @@
 		However, an obvious disadvantage is that connected symbols in some handwritings may be recognized as one single symbol. Another problem is to automatically define the number of symbols inside a given equation. Identifying the right point in the dendrogram is not trivial, as the horizontal pixel distance between the connection of two symbols and inside the symbol itself is the same.
 	
 
-	\subsection{Classification}
+	\subsection{Classification using traditional methods}
 		As a second step, we want to recognize every single symbol extracted from the equation by the clustering algorithm. To do this, we will first access to a database regrouping a lot of single mathematical symbols as image files. Then, we will train several classifiers and compare their performance. Finally, we will be able to choose the best classifier to use for a working Handwritten Equation Recognizer.
 		
 	\paragraph{The dataset}
 	The database we chose is called \texttt{HASYv2} \cite{hasyv2}, a publicly available, and free of charge dataset of
-single symbols for computer vision applications. It contains a total of $168'233$ images of $369$ different classes. Symbols that lie in this dataset range from the Latin and Greek alphabets to numbers, with specific mathematical symbols on top of it (e.g. $\int, \supset, \sum, \coprod, ...$). Each entry of the dataset is a $[32\times32]$, black \& white, \texttt{png} image representing a particular symbol. A hundred examples of images taken from the dataset are displayed below.
+single symbols for computer vision applications. It contains a total of $168,233$ images of $369$ different classes. Symbols that lie in this dataset range from the Latin and Greek alphabets to numbers, with specific mathematical symbols on top of it (e.g. $\int, \supset, \sum, \coprod, ...$). Each entry of the dataset is a $[32\times32]$, black \& white, \texttt{png} image representing a particular symbol. A hundred examples of images taken from the dataset are displayed below.
 
 	\begin{figure}[htp]
 	\centering
@@ -142,7 +142,15 @@ single symbols for computer vision applications. It contains a total of $168'233
 	\item Classification Tree (58\%)
 	\end{enumerate}
 	
-		
+	
+	\subsection{Classification using neural nets}	
+	
+	In recent years neural nets were very successfully applied to image recognition problems like the one presented above. Therefore we used the Matlab NeuralNet Toolbox to create and train a traditional neural net and the Keras package based on python and TensorFlow to apply the process for a convolutional neural network. The drawback of neural nets is their relatively large training time which makes it hard to evaluate them in a good manner. We mostly ran only one training process for each architecture.
+	\subparagraph{Traditional neural net}
+	Using Matlabs built-in NN Toolbox we trained NNs with a different amount of training data, input dimensions and hidden units in the one hidden layer we used. As more training data is always better we basically took as much as the run time of the training process allowed us to as it scaled linear with the amount of train data. We mostly used 30\% to 40\% of the whole set and the rest we splitted in half for test and validation. The input dimension also played a big role in the run time but using the results from the previous section we settled on values between 30 and 60. The number of hidden units were almost maxed out as we got close to filling up the complete RAM and Matlab actually did not allow us to go far beyond 500 hidden units. We experimented with values from 150 to 500 therefor. As the training processes took about 3 to 7 hours depending on the configuration we could not run a search over all the parameters so played with them using our intuition and understanding. The best neural network achieved a misclassification rate of only 31\% on the test set using only 36 input dimensions and 250 hidden units.
+	\subparagraph{Convolutional NN}
+	We tried to classify some examples of the data set ourselves to have a feeling for what error rate is actually achievable (at least by humans). We approximated the human error rate at about 20\% to 30\% so we were quite satisfied with the traditional NN. However as we applied the trained model on the symbols retrieved out of images by the clustering process we had to realize that the neural net could not generalize to different stroke widths and input data (as we had to resize and apply a binarizer the results seemed to be a bit artificial and not well represented by the training set we used). As Convolutional NNs tend to better generalize on image data \cite{lenet} we wanted to try them out using Keras \cite{keras} in python. With the filter sizes, the number of features, the number of convolutional layers, dropout regularization etc. we had an even larger space of parameters to tune, however the actual input dimension was not one of them as the way a CNN works does not require this step and it could not even handle PCA-reduced data very well. Surprisingly the training process was much faster giving often (for different sets of parameters) after an hour of training an error rate of below 30\% already. With this it would have been actually achievable to perform systematic parameter exploration if we had more time. The best performing CNN constructed and trained by us achieved a misclassification rate of only 21\% with 2 convolutional layers (using pooling) and 64 features in the last one, applying an additional traditional hidden layer of 512 units.
+	% TODO write something about generalization to our data
 	
 	\section{Conclusion}
 	
@@ -157,6 +165,14 @@ single symbols for computer vision applications. It contains a total of $168'233
 		
 		\bibitem{hasyv2}
 		Thoma, M. (2017), The HASYv2 dataset
+		
+		\bibitem{lenet}
+		LeNet-5, convolutional neural networks
+		\\\texttt{http://yann.lecun.com/exdb/lenet/}
+		
+		\bibitem{keras}
+		Keras: Deep Learning library for Theano and TensorFlow
+		\\\texttt{https://keras.io}
 		
 		
 	\end{thebibliography}

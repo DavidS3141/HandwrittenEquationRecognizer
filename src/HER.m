@@ -7,7 +7,7 @@ if isempty(latexLabel)
     load('../data/extract/latexLabel.mat');
 end
 
-angle = getRotationAngle(image);
+%angle = getRotationAngle(image);
 %image = applyRotation(image,angle);
 filteredImage = imbinarize(rgb2gray(image));
 %filteredImage = filterImage(image);
@@ -23,7 +23,10 @@ for BB = listBB
     end
     symbolImage = image(BB(1):BB(2),BB(3):BB(4),:);
     symbolImage = rgb2gray(symbolImage);
+    symbolImage = double(symbolImage) - double(min(min(symbolImage)));
     symbolImage = double(symbolImage)/double(max(max(symbolImage)));
+    assert(min(min(symbolImage))==0);
+    assert(max(max(symbolImage))==1);
     sizeOfImage = max(size(symbolImage));
     addRows = sizeOfImage - size(symbolImage,1);
     addCols = sizeOfImage - size(symbolImage,2);
@@ -35,6 +38,7 @@ for BB = listBB
     symbolImage = imresize(symbolImage, [32 32]);
     % tresh = prctile(symbolImage(:),16.5); %perform this over all symbols simultaneously
     % symbolImage = (symbolImage >= tresh);
+    % symbolImage = imbinarize(symbolImage);
     prob = getRecognition(symbolImage);
     [bestp, besty] = max(prob);
     figure;
@@ -44,22 +48,42 @@ for BB = listBB
     oldlab = lab
     lab = ''
     for c=oldlab
-        disp(c)
         if c~='\'
-            lab = [lab c]
+            lab = [lab c];
         end
     end
     if lab(1)>='A' & lab(1)<='Z'
         lab(1) = char('a' + lab(1) - 'A');
     end
     if lab(1)=='|'
-       lab = 'vert'
+       lab = 'vert';
     end
     if lab(1)=='{'
-       lab = 'lbrace'
+       lab = 'lbrace';
     end
     if lab(1)=='-'
-       lab = 'minus'
+       lab = 'minus';
+    end
+    if lab(1)=='+'
+       lab = 'plus';
+    end
+    if lab(1)=='$'
+       lab = 'dollar';
+    end
+    if strcmp(lab,'mathscr{C}')
+       lab = 'scrc';
+    end
+    if strcmp(lab,'mathcal{O}')
+       lab = 'calo';
+    end
+    if strcmp(lab,'mathds{Z}')
+       lab = 'bbz';
+    end
+    if strcmp(lab,'rightarrow')
+       lab = 'longrightarrow';
+    end
+    if strcmp(lab,'mathbb{1}')
+       lab = '1';
     end
     lab = [ '../data/symbols/' lab '.png' ]
     [labim, map, alpha] = imread(lab);

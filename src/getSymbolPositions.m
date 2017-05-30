@@ -18,7 +18,7 @@ BW = 1 - imbinarize(gray);
 
 % check that clustering can actually handle this
 nbrpixels = sum(sum(BW));
-assert(nbrpixels<3000);
+assert(nbrpixels<4000);
 
 %% data conversion parameters
 x_scale = 1;
