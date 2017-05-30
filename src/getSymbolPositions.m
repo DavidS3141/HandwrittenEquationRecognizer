@@ -80,14 +80,26 @@ end
 listBB = listBB';
 
 %% visualize clusters
-% scatter(data(:,2),data(:,1),16,c)
+% factor = 1000/size(img,2);
+% figure('Position', [300,300,factor*size(img,2),factor*size(img,1)]);
+% scatter(data(:,2),data(:,1),16,c);
+% set(gca,'Ydir','reverse');
+% hold on
 % for ii = unique(c)'
-%     figure
-%     hold on
-%     scatter(data(c==ii,2)*x_scale,data(c==ii,1)*y_scale);
 %     scatter(means(ii,2),means(ii,1),'LineWidth',1.5,'MarkerFaceColor',[0 .7 .7])
-%     rectangle('Position',[bb(ii,1:2),bb(ii,3:4)-bb(ii,1:2)],'EdgeColor','r','LineWidth',2 )
-%     axis([0 size(BW,2) 0 size(BW,1)]);
+%     rectangle('Position', bb(ii,:),'EdgeColor','r','LineWidth',2 )
 % end
+
+%% ouput image
+
+% out = img;
+% shapeInserter = vision.ShapeInserter('BorderColor','Custom',...
+% 'CustomBorderColor', uint8([255 0 0]));
+% hold on
+% for ii = unique(c)'
+%     rectangle = int32(bb(ii,:));
+%     out = shapeInserter(out, rectangle);
+% end
+% imshow(out)
 
 end
