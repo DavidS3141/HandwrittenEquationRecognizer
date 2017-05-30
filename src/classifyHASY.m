@@ -114,7 +114,10 @@ Xtest = XtestFull(:, 1:nDim);
 disp(['New dimension is nDim=', num2str(nDim)]);
 
 tic
-[mse(i,1), mdlKnn] = modelError('knn', Xtrain, ytrain, Xtest, ytest);
+[mse(i,1), mdlKnnTemp] = modelError('knn', Xtrain, ytrain, Xtest, ytest);
+if(i > 1 && mse(i,1) < mse(i-1,1)) % if error is lower
+    mdlKnn = mdlKnnTemp; % save model
+end
 time(i,1) = toc;
 % Optimize KNN
 % knnOpt = fitcknn(Xtrain,ytrain,...
@@ -123,15 +126,24 @@ time(i,1) = toc;
 %     struct('AcquisitionFunctionName','expected-improvement-plus'));
 
 % Bayes
-[mse(i,2), mdlBayes] = modelError('bayes', Xtrain, ytrain, Xtest, ytest);
+[mse(i,2), mdlBayesTemp] = modelError('bayes', Xtrain, ytrain, Xtest, ytest);
+if(i > 1 && mse(i,2) < mse(i-1,2)) % if error is lower
+    mdlBayes = mdlBayesTemp; % save model
+end
 time(i,2) = toc - time(i,1);
 
 % Tree
-[mse(i,3), mdlTree] = modelError('tree', Xtrain, ytrain, Xtest, ytest);
+[mse(i,3), mdlTreeTemp] = modelError('tree', Xtrain, ytrain, Xtest, ytest);
+if(i > 1 && mse(i,3) < mse(i-1,3)) % if error is lower
+    mdlTree = mdlLdaTemp; % save model
+end
 time(i,3) = toc - time(i,2);
 
 % Linear discriminant
-[mse(i,4), mdlLda] = modelError('lda', Xtrain, ytrain, Xtest, ytest);
+[mse(i,4), mdlLdaTemp] = modelError('lda', Xtrain, ytrain, Xtest, ytest);
+if(i > 1 && mse(i,4) < mse(i-1,4)) % if error is lower
+    mdlLda = mdlLdaTemp; % save model
+end
 time(i,4) = toc - time(i,3);
 
 % Binary SVMs

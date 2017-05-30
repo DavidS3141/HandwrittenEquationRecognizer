@@ -1,4 +1,4 @@
-function [ errorTest, model ] = modelError( modelName, Xtrain, ytrain, Xtest, ytest )
+function [ errorTest, model, ypred ] = modelError( modelName, Xtrain, ytrain, Xtest, ytest )
 % Returns the error of a classification model trained
 %  with respect to the input, on train set (Xtrain, ytrain)
 %  and (Xtest, ytest)
@@ -12,7 +12,7 @@ switch modelName
     case 'tree'
         model = fitctree(Xtrain, ytrain);
     case 'bayes'
-        model = fitNaiveBayes(Xtrain, ytrain);
+        model = fitcnb(Xtrain, ytrain);
     otherwise 
         model = fitcknn(Xtrain, ytrain);
 end
