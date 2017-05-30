@@ -25,7 +25,7 @@ clear a;
 y = transformLabels(y, symbolMap{1});
 
 %% %% %% %% Loop on number of classes
-nClassesList = [12:2:28];
+nClassesList = [12:10:92];
 
 mse = zeros(size(nClassesList,2), 5);
 timeTrain = mse;
@@ -80,9 +80,10 @@ disp(' End prediction');
 
 mdlLabels = {'knn','bayes', 'tree', 'lda', 'svm'};
 
-plotModelsData(nClassesList, mse, mdlLabels, 'Comparison of misclassification rate between models', 'Misclassification rate');
-plotModelsData(nClassesList, timeTrain, mdlLabels, 'Comparison of training time', 'Training time');
-plotModelsData(nClassesList, timePredict, mdlLabels, 'Comparison of predict time', 'Predict time');
-plotModelsData(nClassesList, timeTrain+timePredict, mdlLabels, 'Comparison of total time', 'Total time');
+%%
+plotModelsData(nClassesList, mse, mdlLabels, 'Comparison of misclassification rate between models', 'Nr of classes', 'Misclassification rate');
+plotModelsData(nClassesList, timeTrain, mdlLabels, 'Comparison of training time', 'Nr of classes', 'Training time');
+plotModelsData(nClassesList, timePredict, mdlLabels, 'Comparison of predict time', 'Nr of classes','Predict time');
+plotModelsData(nClassesList, timeTrain+timePredict, mdlLabels, 'Comparison of total time', 'Nr of classes', 'Total time');
 
 disp(['Total runtime is ', num2str(clock - oldclock)]);

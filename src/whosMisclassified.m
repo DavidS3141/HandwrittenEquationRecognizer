@@ -50,26 +50,26 @@ Xtest = XtestFull(:, 1:nDim);
 
 
 %% Save models
-load('../data/models/mdlKnn.mat');
-load('../data/models/mdlBayes.mat');
-load('../data/models/mdlTree.mat');
-load('../data/models/mdlLda.mat');
+load('~/Desktop/MatlabMDL/mdlKnn.mat');
+load('~/Desktop/MatlabMDL/mdlBayes.mat');
+load('~/Desktop/MatlabMDL/mdlTree.mat');
+load('~/Desktop/MatlabMDL/mdlLda.mat');
 
 %% Find misclassified examples
 
-ypred = mdlKnn.predict(Xtest);
+ypred = mdlLda.predict(Xtest);
 
 XtestReconstruct = XtestFull * coeffs';
 misIdx = find(ypred ~= ytest);
 
 %% Output misclassified examples
 nOutput = 10;
-offset = 82;
+idx = randsample(misIdx, nOutput);
 
-for i=misIdx(offset:offset+nOutput)'
+for i=idx'
     img = reshape(XtestReconstruct(i, :), [32 32]);
     figure;
-    predLabel = cell2mat(symbolMap{2}(ypredKnn(i)+1,:));
+    predLabel = cell2mat(symbolMap{2}(ypred(i)+1,:));
     trueLabel = cell2mat(symbolMap{2}(ytest(i)+1,:));
     imagesc(img); colormap(gray);
     titleStr = ['Predicted: ', num2str(predLabel),...

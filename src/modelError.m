@@ -4,7 +4,7 @@ function [ errorTest, model, ypred, timeTrain, timePredict ] = modelError( model
 %  and (Xtest, ytest)
 % The output is the error on the test set and the model itself
 
-tic
+tic;
 switch modelName
     case 'svm'
         model = fitcecoc(Xtrain, ytrain);
