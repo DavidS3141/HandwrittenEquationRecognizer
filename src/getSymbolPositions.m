@@ -4,8 +4,15 @@ function [ listBB ] = getSymbolPositions( image,cutoff_flag,cutoff_var)
 %       Returns a list of bounding boxes, described by 4-dim vectors
 %               (min x, max x, min y, max y)
 
+if nargin<2
+    cutoff_flag = 0;
+    cutoff_var = 0;
+end
+
+image = uint8(image);
 %% read data
 gray = rgb2gray(image);
+
 % otsu thresholding & 1 for black pixel
 BW = 1 - imbinarize(gray);
 
