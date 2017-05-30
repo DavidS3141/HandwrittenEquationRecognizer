@@ -64,9 +64,8 @@ misIdx = find(ypred ~= ytest);
 
 %% Output misclassified examples
 nOutput = 10;
-offset = 40;
+offset = 82;
 
-warning('off', 'last');
 for i=misIdx(offset:offset+nOutput)'
     img = reshape(XtestReconstruct(i, :), [32 32]);
     figure;
