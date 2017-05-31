@@ -1,6 +1,7 @@
 # Matlab files
 *.m~
 *.asv
+mdl*
 
 # iCloud files
 *.icloud
