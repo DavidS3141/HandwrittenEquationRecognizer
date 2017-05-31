@@ -1,0 +1,88 @@
+\documentclass{article}%
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{cuted}
+\usepackage{lipsum}
+\title{Project proposal: Handwritten Equation Recognizer (HER)}
+\author{William Jussiau, Johnson Loh, David Schmidt}
+\date{\today}
+\setlength\columnsep{3em}
+\usepackage{graphicx}
+
+\begin{document}
+\maketitle
+
+	
+	\section{Project idea}
+	While searching for a final project in machine learning, we figured out we wanted to try to apply our knowledge to a project involving images of any kind. After doing a bit of research and putting aside projects with a lot of pre-processing or image processing, we had the idea to extend the digit recognition practical to a more complete situation. Hence, the idea behind the Handwritten Equation Recognizer is to explore the limits and capabilities of some basic algorithms, and make them interact with each other. 
+	
+	\section{Background}
+	Image processing and pattern recognition have been thoroughly explored by numerous research projects in machine learning, so we are going to be able to access valuable knowledge through some of the work that has already been produced. Some equation recognizers already exist and documentation is available online, but they mostly rely on a temporal analysis of how the symbols have been written ("stroke analysis"). Thus, our approach will be a bit different and may leave us a bit of freedom on the process.
+	
+	\section{Datasets}
+	We used two datasets for this project, for the tasks of clustering and classification respectively. Both are available online and free of charge. 
+	
+	The first one, CROHME (Competition on Recognition of Handwritten Mathematical Expressions, \cite{crohme}), consists of handwritten equations in a stroke format. It is possible to reconstruct the image from this format, and then use it for clustering single symbols.
+	
+	The second one, HASYv2 (HAndwritten SYmbols, \cite{hasyv2}), is a consists of images of single mathematical symbols, ranging from the Latin and Greek alphabets to more specific symbols (e.g. $\int, \supset, \sum, \coprod, ...$). There are in total 168233 different images of 369 classes. They are $[32\times32]$, black and white images given as \texttt{.png} files.
+	
+	\section{Timeline and proposed method}
+	We came up with a two-step procedure consisting of a clustering step and a classifying step. 
+	
+	The first, a clustering step, is to be applied on the image of a complete handwritten equation, and aims at partitioning the image in single symbols. In the best case, one cluster would exactly correspond to one symbol.
+	
+	The second, a classifying step, aims at recognizing each single symbol given by the clustering step. This task simply matches a given image to a known symbol through a trained classification model.
+	
+	In the end, we would put the two parts together and be able to have a handwritten equation as an input and its interpretation as an output.
+	
+	\section{Team members contribution}
+	We split the two main tasks between the three members of the group as follows:
+
+\begin{tabular}{|c|c|}
+\hline
+Team member & Contribution \\
+\hline
+\hline
+William Jussiau & Classification (standard models), \\
+	& data acquisition and pre-processing \\
+\hline
+Johnson Loh &  Clustering, \\
+        & handwritten equations examples \\
+\hline
+David Schmidt & Classification (neural networks), \\
+ 	&  automatically de-rotate equations, data acquisition and pre-processing \\
+\hline
+\end{tabular}
+		
+		\begin{thebibliography}{9}
+		\bibitem{crohme} 
+		International Conference on Frontiers in Handwriting Recognition in Shenzen, China (ICFHR),
+		\\\texttt{http://ivc.univ-nantes.fr/CROHME/}
+		
+			\bibitem{hasyv2}
+		Thoma, M. (2017), The HASYv2 dataset
+		
+	\end{thebibliography}
+
+\end{document} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
