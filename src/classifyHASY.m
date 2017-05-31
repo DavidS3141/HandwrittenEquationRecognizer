@@ -1,3 +1,8 @@
+%% Classify HASY
+% This file builds classifier models for the HASYv2 dataset
+% There is a loop over the number of dimensions to take from PCA,
+%  to asses the efficiency of the models depending on the dimensionality
+
 %% Clear
 clear;
 clc;
@@ -72,7 +77,8 @@ else
 end
 
 
-%% %% %% %% 
+%% Train models
+%% Extract given number of classes
 nTrainClasses = 369;
 
 Xcut = X(y<nTrainClasses+1,:);
@@ -96,7 +102,7 @@ end
 trainRatio = 0.6;
 [XtrainFull, ytrain, XtestFull, ytest] = splitData(Xpca, ycut, trainRatio);
 
-%% nDim
+%% Loop on nDim
 oldclock = clock;
 close all;
 nDimList = [4, 8, 16, 32, 64, 128];
@@ -107,7 +113,6 @@ mdlLabels = {'knn','bayes', 'tree', 'lda', 'svm'};
 for i=1:length(nDimList)
 % Reduce dimension
 nDim = nDimList(i);
-
 Xtrain = XtrainFull(:, 1:nDim);
 Xtest = XtestFull(:, 1:nDim);
 
@@ -115,13 +120,6 @@ disp(['New dimension is nDim=', num2str(nDim)]);
 
 tic
 [mse(i,1), ~, ~, time(i,1)] = modelError('knn', Xtrain, ytrain, Xtest, ytest);
-
-
-% Optimize KNN
-% knnOpt = fitcknn(Xtrain,ytrain,...
-%     'OptimizeHyperparameters','auto',...
-%     'HyperparameterOptimizationOptions',...
-%     struct('AcquisitionFunctionName','expected-improvement-plus'));
 
 % Bayes
 [mse(i,2), ~, ~, time(i,2)] = modelError('bayes', Xtrain, ytrain, Xtest, ytest);
@@ -132,7 +130,7 @@ tic
 % Linear discriminant
 [mse(i,4), ~, ~, time(i,4)] = modelError('lda', Xtrain, ytrain, Xtest, ytest);
 
-% Binary SVMs
+% Binary SVMs ----- deactivated because of RAM overload
 %[mse(i,5), mdlSvm] = modelError('svm', Xtrain, ytrain, Xtest, ytest);
 %time(i,5) = toc; %- time(i,4);
 end

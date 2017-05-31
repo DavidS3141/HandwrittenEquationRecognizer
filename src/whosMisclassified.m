@@ -1,3 +1,8 @@
+%% WhosMisclassified?
+% This script shows the user the images that
+%  may have been misclassified by a given model
+
+
 %% Clear
 clear;
 clc;

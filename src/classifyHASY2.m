@@ -1,3 +1,9 @@
+%% Classify HASY -- 2
+% This file builds classifier models for the HASYv2 dataset
+% There is a loop over the number of classes to consider
+%  to asses the efficiency of different models
+% The reduced number of dimensions (PCA) is set to 64 by default
+
 %% Clear
 clear;
 clc;
@@ -34,6 +40,7 @@ oldclock = clock;
 
 nDim = 64;
 
+%% Loop on number of classes
 for i = 1:length(nClassesList)
     
 nClasses = nClassesList(i);
@@ -80,7 +87,8 @@ disp(' End prediction');
 
 mdlLabels = {'knn','bayes', 'tree', 'lda', 'svm'};
 
-%%
+%% Plot data (time, mse...)
+
 plotModelsData(nClassesList, mse, mdlLabels, 'Comparison of misclassification rate between models', 'Nr of classes', 'Misclassification rate');
 plotModelsData(nClassesList, timeTrain, mdlLabels, 'Comparison of training time', 'Nr of classes', 'Training time');
 plotModelsData(nClassesList, timePredict, mdlLabels, 'Comparison of predict time', 'Nr of classes','Predict time');

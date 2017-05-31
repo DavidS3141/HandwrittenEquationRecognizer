@@ -1,3 +1,8 @@
+%% Save HASY Images
+% This script reads HASYv2 image files (.png),
+%  constructs a feature vector,
+%  and saves it in a .mat file
+
 %% Clear
 clear all; clc; close all;
 

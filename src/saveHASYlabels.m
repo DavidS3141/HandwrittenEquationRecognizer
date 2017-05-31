@@ -1,3 +1,8 @@
+%% Save HASY Images
+% This script reads HASYv2 labels (from .csv file)
+%  and saves them in a .mat file
+% The symbols corresponding to the labels are extracted as well
+
 %% Clear
 clear all; clc; close all;
 
