@@ -1,6 +1,5 @@
 function [ filteredImage ] = filterImage( image )
-%filterImage Summary of this function goes here
-%   Detailed explanation goes here
+%filterImage: preprocess the image, deprecated! We ended up using imbinarize and rgb2gray!
 
     % constants
     shade_blocks = 20;
@@ -17,7 +16,6 @@ function [ filteredImage ] = filterImage( image )
     image = image - shade;
     image = image - min(min(image));
     image = image / max(max(image));
-    
+
     filteredImage = (image>0.5);
 end
-

@@ -1,3 +1,8 @@
+'''
+This module provides the predict function for the trained CNN.
+'''
+
+
 import numpy as np
 import scipy.io
 import keras.models

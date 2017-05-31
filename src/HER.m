@@ -1,6 +1,5 @@
 function [ listSymbols ] = HER( image )
-%HER Summary of this function goes here
-%   Detailed explanation goes here
+%HER The total process of applying the HandwrittenEquationRecognizer on an image
 
 persistent latexLabel
 if isempty(latexLabel)

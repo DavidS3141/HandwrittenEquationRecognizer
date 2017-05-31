@@ -1,6 +1,5 @@
 function [ listBB ] = getSymbolPositions( image,cutoff_flag,cutoff_var)
-%getSymbolPositions Summary of this function goes here
-%   Detailed explanation goes here
+%getSymbolPositions
 %       Returns a list of bounding boxes, described by 4-dim vectors
 %               (min x, max x, min y, max y)
 
@@ -55,12 +54,12 @@ else
 end
 
 % %% EM Gaussian Mixture Model
-% 
+%
 % obj = fitgmdist(data,16);
 % c = cluster(obj,data);
-% 
+%
 % %% k-means clustering
-% 
+%
 % [c,C] = kmeans(data,16,'Distance','cityblock');
 
 % visualize data

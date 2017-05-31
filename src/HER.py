@@ -1,3 +1,7 @@
+'''
+The python script defining the HER function analogon to the HER.m
+'''
+
 import numpy as np
 from predict import predict
 import scipy.io

@@ -1,3 +1,5 @@
+% This script was used to train the neural network in Matlab.
+
 clear;
 close all;
 

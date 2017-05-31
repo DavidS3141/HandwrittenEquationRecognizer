@@ -1,6 +1,5 @@
 function [ probVector ] = getRecognition( symbolImage )
-%getRecognition Summary of this function goes here
-%   Detailed explanation goes here
+%getRecognition
 %       Return a probability vector containing probabilities for each label
 
 persistent net

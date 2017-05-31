@@ -1,3 +1,7 @@
+'''
+This script was used to train the CNN for the symbol recognition.
+'''
+
 import numpy as np
 import scipy.io
 import matplotlib.pyplot as plt

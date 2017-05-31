@@ -1,6 +1,3 @@
-# Project specific
-python-keras/
-
 # Matlab files
 *.m~
 *.asv
